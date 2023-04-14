@@ -1,6 +1,4 @@
-// import { writefile } from "fs";
-// import fetch from "node-fetch";
-// globalThis.fetch = fetch;
+// import { writeToArchive } from "./script.js";
 
 YOUTUBE_API_KEY = [
   "AIzaSyBesfjYTtAk5vOqCA549-3zr4d4GlCbMvA",
@@ -30,7 +28,13 @@ $(document).ready(() => {
 });
 
 $("#refresh").on("click", () => {
-  refresh();
+  var nextIdIndex = watchHistory.indexOf(currentId) + 1;
+  if (nextIdIndex >= watchHistory.length - 1) {
+    refresh();
+  } else {
+    currentId = watchHistory[nextIdIndex];
+    cueVideo(watchHistory[nextIdIndex]);
+  }
 });
 
 $("#previous").on("click", () => {
@@ -52,12 +56,9 @@ $("#play").on("click", () => {
 });
 // KEY CONTROLS FOR PLAYER
 
-$("#play").on("keydown", (event) => {
-  if (event.key === "s") {
-    console.log("hello");
-  }
+$("#archive").on("click", () => {
+  writeToArchive(currentId);
 });
-
 // ADD VIDEO ID TO ARCHIVE ON BUTTON CLICK
 // $("#archive").on("click", () => {
 //   writefile("archive.txt", "currentId" + currentId, (err) => {
@@ -70,7 +71,7 @@ async function apiRequest(query) {
   videoData = [];
   console.log("ready");
   //API request
-  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&key=${YOUTUBE_API_KEY[2]}&type=video&videoDuration=short&videoEmbeddable=true&maxResults=100&videoDefinition=high&q=${query}`;
+  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&key=${YOUTUBE_API_KEY[3]}&type=video&videoDuration=short&videoEmbeddable=true&maxResults=100&videoDefinition=high&q=${query}`;
   const response = await fetch(url);
   console.log("2");
   const data = await response.json();
@@ -95,9 +96,10 @@ async function apiRequest(query) {
 
 async function apiContentDetails(videoIdList) {
   videoContentDetails = [];
-  const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoIdList}&part=contentDetails&key=${YOUTUBE_API_KEY[1]}`;
+  const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoIdList}&part=contentDetails&key=${YOUTUBE_API_KEY[4]}`;
   const response = await fetch(url);
   const data = await response.json();
+  console.log("data" + data);
   return data;
 }
 // YOUTUBE IFRAME CONSTRUCTOR
