@@ -22,6 +22,8 @@ YOUTUBE_API_KEY = [
 //     }
 // }
 var currentId;
+var nextId;
+var watchHistory = [];
 
 $(document).ready(() => {
   startup();
@@ -29,6 +31,16 @@ $(document).ready(() => {
 
 $("#refresh").on("click", () => {
   refresh();
+});
+
+$("#previous").on("click", () => {
+  var previousIdIndex = watchHistory.indexOf(currentId) - 1;
+  if (previousIdIndex >= 0) {
+    currentId = watchHistory[previousIdIndex];
+    cueVideo(watchHistory[previousIdIndex]);
+  } else {
+    // do nothing
+  }
 });
 
 $("#pause").on("click", () => {
@@ -58,7 +70,7 @@ async function apiRequest(query) {
   videoData = [];
   console.log("ready");
   //API request
-  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&key=${YOUTUBE_API_KEY[1]}&type=video&videoDuration=short&videoEmbeddable=true&maxResults=100&videoDefinition=high&q=${query}`;
+  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&key=${YOUTUBE_API_KEY[2]}&type=video&videoDuration=short&videoEmbeddable=true&maxResults=100&videoDefinition=high&q=${query}`;
   const response = await fetch(url);
   console.log("2");
   const data = await response.json();
@@ -100,7 +112,7 @@ var ytPlayer = function onYouTubeIframeAPIReady(id) {
       rel: 0,
       autoplay: 1,
       modestbranding: 1,
-      controls: 0,
+      controls: 1,
       color: "white",
       fs: 1,
     },
@@ -152,13 +164,15 @@ function durationNameFilter(videoContentDetails) {
       filteredVideoIdList.push(vidDetails[i]["id"]);
     }
   }
+  console.log("Filtered video ID list: " + filteredVideoIdList);
   return filteredVideoIdList;
 }
 //GENERATES RANDOM ID FROM VIDEO DATA
 function randomId(dataValue) {
   var embedId = dataValue.items[0]["id"]["videoId"];
   console.log(dataValue.items);
-  currentId = embedId;
+  // currentId = embedId;
+  console.log("random id chosed from randomId: " + embedId);
   return embedId;
   //   var url = `https://www.youtube.com/embed/${videoId}?&autoplay=1`;
   //   console.log(url);
@@ -176,18 +190,29 @@ function cueVideo(id) {
 // cueVideo("QPjHCAHfjoU&t");
 // apiRequest("img 2182");
 
+async function fetchVideoId() {
+  while (true) {
+    var queryValue = query();
+    var videoIdList = await apiRequest(queryValue);
+    var videoContentDetails = await apiContentDetails(videoIdList);
+    var videoIdListFinal = await durationNameFilter(videoContentDetails);
+    if (videoIdListFinal.length > 1) {
+      var randomId =
+        videoIdListFinal[Math.floor(Math.random() * videoIdListFinal.length)];
+      console.log("random id generated from fetch function: " + randomId);
+      watchHistory.push(randomId);
+      return randomId;
+    }
+  }
+}
+
 async function startup() {
-  var queryValue = query();
-  var videoIdList = await apiRequest(queryValue);
-  var videoContentDetails = await apiContentDetails(videoIdList);
-  var videoIdListFinal = await durationNameFilter(videoContentDetails);
-
-  var randomId = await videoIdListFinal[
-    Math.floor(Math.random() * videoIdListFinal.length + 1)
-  ];
-  console.log(randomId);
-
+  watchHistory = [];
+  randomId = await fetchVideoId();
   ytPlayer(randomId);
+  currentId = randomId;
+  console.log("random id selected from startup function: " + randomId);
+  nextId = await fetchVideoId();
   //   console.log(videoContentDetails);
 
   //   console.log(videoId);
@@ -195,15 +220,9 @@ async function startup() {
 }
 
 async function refresh() {
-  var queryValue = query();
-  var videoIdList = await apiRequest(queryValue);
-  var videoContentDetails = await apiContentDetails(videoIdList);
-  var videoIdListFinal = await durationNameFilter(videoContentDetails);
-
-  var randomId = await videoIdListFinal[
-    Math.floor(Math.random() * videoIdListFinal.length + 1)
-  ];
-  console.log(randomId);
-
-  cueVideo(randomId);
+  cueVideo(nextId);
+  currentId = nextId;
+  console.log("refresh video cued");
+  nextId = await fetchVideoId();
+  console.log("watch History: " + watchHistory);
 }
