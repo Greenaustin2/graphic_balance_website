@@ -10,23 +10,27 @@
   </head>
   <body>
     <div class="container">
-      <h1 id="header">GRAPHIC BALANCE</h1>
+      <div class="header">
+        <h1 id="header">GRAPHIC BALANCE</h1>
+      </div>
 
       <div class="wrapper">
         <div id="player"></div>
       </div>
-
-      <div class="buttons">
-        <button type="button" id="refresh">next --></button>
-        <button type="button" id="pause">pause</button>
-        <button type="button" id="play">play</button>
-        <button type="button" id="archive">submit to archive</button>
-        <button type="button" id="previous">previous</button>
+      <div class="bottom">
+        <div class="button-group">
+          <button type="button" class="button" id="previous">previous</button>
+          <button type="button" class="button" id="refresh">next</button>
+          <button type="button" class="button" id="pause">pause</button>
+          <button type="button" class="button" id="play">play</button>
+        </div>
+        <!-- <button type="button" id="archive">submit to archive</button> -->
       </div>
     </div>
 
     <script src="http://www.youtube.com/player_api"></script>
-    <script src="youtube.js"></script>
-    <script type="module" src="script.js"></script>
+    <script src="/javascript/youtube.js"></script>
+    <script type="module" src="/javascript/script.js"></script>
+    <script type="module" src="/javascript/server.js"></script>
   </body>
 </html>

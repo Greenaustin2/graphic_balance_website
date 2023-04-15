@@ -4,30 +4,54 @@ body {
   overflow: hidden;
 }
 
+/* grid container */
 .container {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   grid-template-rows: repeat(3, 33%);
   position: relative;
-  border: solid orange;
+  /* border: solid orange; */
 }
 
+.header {
+  grid-row: 1;
+  grid-column: 2;
+}
+
+/* iframe wrapper */
 .wrapper {
   display: inline-block;
-  border: solid pink;
+  /* border: solid pink; */
   margin: auto 0px;
+  grid-row: 2;
+  grid-column: 2;
 }
+
 .center {
   grid-row: 2;
   grid-column: 1/4;
-  border: solid orange;
+  /* border: solid orange; */
   position: relative;
 }
 
-#refresh {
+.bottom {
+  grid-row: 3;
+  grid-column: 2;
+  /* border: solid purple; */
+  padding: 20px 0px 0px 0px;
+  text-align: center;
+}
+
+.button-group {
+  display: inline-block;
+  position: relative;
+  margin: 0 auto;
+  /* border: solid red; */
+}
+/* #refresh {
   position: relative;
   margin-left: 48%;
-}
+} */
 
 h1 {
   font-size: 150px;
@@ -38,7 +62,7 @@ h1 {
   font-size: 50px;
   position: relative;
   font-family: "luminari";
-  text-align: right;
+  text-align: center;
 }
 
 #player {
