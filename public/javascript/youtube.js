@@ -110,8 +110,8 @@ var player;
 var ytPlayer = function onYouTubeIframeAPIReady(id) {
   console.log("The new id is" + id);
   player = new YT.Player("player", {
-    height: "609",
-    width: "1000",
+    height: "100%",
+    width: "100%",
     videoId: id,
     playerVars: {
       playsInline: 1,
