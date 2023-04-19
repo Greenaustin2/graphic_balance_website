@@ -3,6 +3,9 @@
 // import { writeToArchive } from "./script.js";
 //jshint esversion:6
 
+const mongoose = require("mongoose");
+mongoose.connect("mongodb://localhost:27017/gbArchive");
+
 const YOUTUBE_API_KEY = [
   "AIzaSyBesfjYTtAk5vOqCA549-3zr4d4GlCbMvA",
   "AIzaSyBLwGPRTTLqwPu36ArhTCe9wfaASMaFP7g",
@@ -13,22 +16,12 @@ const YOUTUBE_API_KEY = [
 ];
 
 const API_INDEX = 4;
-// if (!YOUTUBE_API_KEY) {
-//   throw new Error("No API Key is provided");
-// }
 
-//Verify that the video title contains the search query
-
-// function scrub(data) {
-//     for (i=0; i < data.items.length; i++) {
-//         if (data.items[i].)
-//     }
-// }
 var currentId;
 var nextId;
 var watchHistory = [];
-var watchHistoryCount = 0;
 
+// DOM BUTTON CONTROLS
 $(document).ready(() => {
   startup();
 });
@@ -72,41 +65,6 @@ $("#play").on("click", () => {
 //   });
 // });
 
-// UPDATED API REQUEST TRO CATCH ERROR 403 AND UPDATE API KEY AUTOMATICALLY
-// async function apiRequest(query) {
-//   while (true) {
-//     console.log("1");
-//     videoData = [];
-//     console.log("ready");
-//     //API request
-//     console.log(YOUTUBE_API_KEY);
-//     const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&key=${YOUTUBE_API_KEY[API_INDEX]}&type=video&videoDuration=short&videoEmbeddable=true&maxResults=100&videoDefinition=high&q=${query}`;
-//     try {
-//       const response = await fetch(url);
-//       const data = await response.json();
-//       console.log("3");
-//       console.log(data);
-//       //Sends result data to embed function to be processed
-//       //   console.log(data);
-//       videoIdList = "";
-//       //   console.log(data.items.length);
-//       for (let i = 0; i < data.items.length; i++) {
-//         if (i == data.items.length - 1) {
-//           videoIdList += data.items[i]["id"]["videoId"];
-//         } else {
-//           videoIdList += data.items[i]["id"]["videoId"] + "%2C";
-//         }
-//       }
-//       console.log(videoIdList);
-//       return videoIdList;
-//     } catch (err) {
-//       API_INDEX += 1;
-//       console.log("error" + API_INDEX);
-//       continue;
-//     }
-//   }
-// }
-
 async function apiRequest(query) {
   console.log("1");
   videoData = [];
@@ -120,51 +78,7 @@ async function apiRequest(query) {
   console.log("3");
   console.log(data);
   return data;
-  //Sends result data to embed function to be processed
-  //   console.log(data);
-  videoIdList = "";
-  //   console.log(data.items.length);
-  for (let i = 0; i < data.items.length; i++) {
-    if (i == data.items.length - 1) {
-      videoIdList += data.items[i]["id"]["videoId"];
-    } else {
-      videoIdList += data.items[i]["id"]["videoId"] + "%2C";
-    }
-  }
-  console.log(videoIdList);
-  return videoIdList;
-
-  //   return randomId(data);
 }
-
-// async function apiRequest(query) {
-//   console.log("1");
-//   videoData = [];
-//   console.log("ready");
-//   //API request
-//   console.log(YOUTUBE_API_KEY);
-//   const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&key=${YOUTUBE_API_KEY[0]}&type=video&videoDuration=short&videoEmbeddable=true&maxResults=100&videoDefinition=high&q=${query}`;
-//   const response = await fetch(url);
-//   console.log("2");
-//   const data = await response.json();
-//   console.log("3");
-//   console.log(data);
-//   //Sends result data to embed function to be processed
-//   //   console.log(data);
-//   videoIdList = "";
-//   //   console.log(data.items.length);
-//   for (let i = 0; i < data.items.length; i++) {
-//     if (i == data.items.length - 1) {
-//       videoIdList += data.items[i]["id"]["videoId"];
-//     } else {
-//       videoIdList += data.items[i]["id"]["videoId"] + "%2C";
-//     }
-//   }
-//   console.log(videoIdList);
-//   return videoIdList;
-
-//   //   return randomId(data);
-// }
 
 async function apiContentDetails(data) {
   videoIdList = "";
@@ -190,15 +104,6 @@ async function apiContentDetails(data) {
 
   return contentData;
 }
-
-// async function apiContentDetails(videoIdList) {
-//   videoContentDetails = [];
-//   const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoIdList}&part=contentDetails&key=${YOUTUBE_API_KEY[0]}`;
-//   const response = await fetch(url);
-//   const data = await response.json();
-//   console.log("data" + data);
-//   return data;
-// }
 
 // YOUTUBE IFRAME CONSTRUCTOR
 var player;
@@ -273,28 +178,11 @@ function durationNameFilter(videoContentDetails) {
   console.log(filteredList);
   return filteredList;
 }
-//GENERATES RANDOM ID FROM VIDEO DATA
-// function randomId(dataValue) {
-//   var embedId = dataValue.items[0]["id"]["videoId"];
-//   console.log(dataValue.items);
-//   // currentId = embedId;
-//   console.log("random id chosed from randomId: " + embedId);
-//   return embedId;
-//   //   var url = `https://www.youtube.com/embed/${videoId}?&autoplay=1`;
-//   //   console.log(url);
-//   //   $("#youtube").attr("src", url);
-// }
 
 // CUES VIDEO
 function cueVideo(id) {
   player.loadVideoById({ videoId: id });
 }
-
-// number = query();
-// chosenVideo = apiRequest(number);
-// onYouTubeIframeAPIReady(chosenVideo);
-// cueVideo("QPjHCAHfjoU&t");
-// apiRequest("img 2182");
 
 async function fetchVideoId() {
   while (true) {
@@ -306,18 +194,6 @@ async function fetchVideoId() {
       var randNumber = Math.floor(
         Math.random() * Object.keys(videoIdListFinal).length
       );
-
-      // var randomId =
-      //   videoIdListFinal[
-      //     Math.floor(Math.random() * Object.keys(videoIdListFinal).length)
-      //   ];
-
-      // watchHistory.push(videoIdListFinal[randNumber]);
-      // watchHistory[watchHistoryCount] = videoIdListFinal[randNumber];
-      // watchHistoryCount += 1;
-      // console.log("Watch History Id " + watchHistory[0]);
-      // console.log(randomId);
-      // console.log("Watch History" + watchHistory);
       watchHistory.push(videoIdListFinal[randNumber]);
       console.log("watch history item " + watchHistory[0]["id"]);
       console.log(videoIdListFinal[randNumber]);
@@ -332,11 +208,6 @@ async function startup() {
   currentId = randomId["id"];
   console.log("random id selected from startup function: " + randomId);
   nextId = await fetchVideoId();
-
-  //   console.log(videoContentDetails);
-
-  //   console.log(videoId);
-  //   ytPlayer(videoId);
 }
 
 async function refresh() {
@@ -344,5 +215,4 @@ async function refresh() {
   currentId = nextId["id"];
   console.log("refresh video cued");
   nextId = await fetchVideoId();
-  // console.log("watch History: " + watchHistory);
 }
