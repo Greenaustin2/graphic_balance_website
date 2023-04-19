@@ -67,7 +67,7 @@ $("#play").on("click", () => {
 
 async function apiRequest(query) {
   console.log("1");
-  videoData = [];
+  // var videoData = [];
   console.log("ready");
   //API request
   console.log(YOUTUBE_API_KEY);
