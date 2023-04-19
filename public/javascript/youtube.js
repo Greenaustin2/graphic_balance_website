@@ -71,7 +71,7 @@ async function apiRequest(query) {
   console.log("ready");
   //API request
   console.log(YOUTUBE_API_KEY);
-  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&key=${YOUTUBE_API_KEY[4]}&type=video&videoDuration=short&videoEmbeddable=true&maxResults=100&videoDefinition=high&q=${query}`;
+  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&key=${YOUTUBE_API_KEY[5]}&type=video&videoDuration=short&videoEmbeddable=true&maxResults=100&videoDefinition=high&q=${query}`;
   const response = await fetch(url);
   console.log("2");
   const data = await response.json();
@@ -92,7 +92,7 @@ async function apiContentDetails(data) {
   console.log(videoIdList);
   // return videoIdList;
   // videoContentDetails = [];
-  const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoIdList}&part=contentDetails&key=${YOUTUBE_API_KEY[4]}`;
+  const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoIdList}&part=contentDetails&key=${YOUTUBE_API_KEY[5]}`;
   const response = await fetch(url);
   const contentData = await response.json();
   console.log(contentData);
