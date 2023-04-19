@@ -149,7 +149,7 @@ function query() {
     //Prepends file format string
     return "IMG " + number;
   } else {
-    numLen = 4 - number.length;
+    var numLen = 4 - number.length;
     for (let i = 0; i < numLen; i++) {
       number = "0" + number;
     }
