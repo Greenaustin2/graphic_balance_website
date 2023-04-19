@@ -142,7 +142,7 @@ function onPlayerStateChange(event) {
 // GENERATES TEXT FOR SEARCH QUERY
 function query() {
   // Generates number between 0 and 9999 randomly
-  number = Math.floor(Math.random() * 10000).toString();
+  var number = Math.floor(Math.random() * 10000).toString();
   //Prepends zeroes to generated number ensuring final value is 4 char in length
   if (number.length == 4) {
     console.log("IMG " + number);
