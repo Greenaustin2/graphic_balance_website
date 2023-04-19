@@ -81,7 +81,7 @@ async function apiRequest(query) {
 }
 
 async function apiContentDetails(data) {
-  videoIdList = "";
+  var videoIdList = "";
   for (let i = 0; i < data.items.length; i++) {
     if (i == data.items.length - 1) {
       videoIdList += data.items[i]["id"]["videoId"];
