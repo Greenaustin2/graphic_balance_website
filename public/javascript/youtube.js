@@ -203,7 +203,7 @@ async function fetchVideoId() {
 }
 
 async function startup() {
-  randomId = await fetchVideoId();
+  var randomId = await fetchVideoId();
   ytPlayer(randomId["id"]);
   currentId = randomId["id"];
   console.log("random id selected from startup function: " + randomId);
