@@ -3,8 +3,8 @@
 // import { writeToArchive } from "./script.js";
 //jshint esversion:6
 
-const mongoose = require("mongoose");
-mongoose.connect("mongodb://localhost:27017/gbArchive");
+// const mongoose = require("mongoose");
+// mongoose.connect("mongodb://localhost:27017/gbArchive");
 
 const YOUTUBE_API_KEY = [
   "AIzaSyBesfjYTtAk5vOqCA549-3zr4d4GlCbMvA",
