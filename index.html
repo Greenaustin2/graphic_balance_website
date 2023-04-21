@@ -6,7 +6,15 @@
     <base href="./" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
+    <meta content="X-Content-Type-Options=nosniff" http-equiv="Content-Type" />
+    <!-- <script type="importmap">
+      {
+        "imports": {
+          "mongoose": "https://cdn.jsdelivr.net/npm/mongoose@7.0.4/dist/browser.umd.min.js",
+          "databaseSubmit": "./server.cjs"
+        }
+      } 
+    </script> -->
     <link href="public/css/styles.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
@@ -24,12 +32,18 @@
           <button type="button" class="button" id="refresh">next</button>
           <button type="button" class="button" id="pause">pause</button>
           <button type="button" class="button" id="play">play</button>
+          <form action="/" method="post" id="myForm">
+            <button type="submit" name="archive" id="archive">archive</button>
+          </form>
         </div>
         <!-- <button type="button" id="archive">submit to archive</button> -->
       </div>
     </div>
 
+    <script type="module" src="public/javascript/app.js"></script>
+
     <script src="http://www.youtube.com/player_api"></script>
-    <script type="module" src="public/javascript/youtube.js"></script>
+
+    <!-- <script type="module" src="public/javascript/database.js"></script> -->
   </body>
 </html>
