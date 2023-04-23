@@ -1,10 +1,12 @@
-const mongoose = require("mongoose");
 const express = require("express");
 const bodyParser = require("body-parser");
 const https = require("https");
 const app = express();
-var currentId = currentId;
-
+const mongoose = require("mongoose");
+const ejs = require("ejs");
+// var currentId = currentId;
+app.set("view engine", "ejs");
+//EXPRESS SERVER INITIALIZATION
 app.use(function (req, res, next) {
   if (req.headers["x-forwarded-proto"] === "https") {
     res.redirect("http://" + req.hostname + req.url);
@@ -16,30 +18,37 @@ app.use(function (req, res, next) {
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.static(__dirname));
+app.use(express.static("public"));
 
+//HOME PAGE
 app.get("/", function (req, res) {
   res.sendFile(__dirname + "/index.html");
 });
 
-app.use(express.static("public"));
+//ARCHIVE DATABASE RETRIEVAL AND EJS REFERENCE
+app.get("/archive", async (req, res) => {
+  var foundItems = await getDatabaseItems();
+  res.render("index", { foundItems: foundItems });
+});
 
+// POST DATA TO DATABASE ON CLICK ARCHIVE BUTTON
 app.post("/", function (req, res) {
-  console.log("hello");
   var currentId = req.body.currentId;
-  console.log(currentId);
-  databaseSubmit(currentId);
+  databaseSubmit(currentId, res);
 });
 
 app.listen(process.env.PORT || 3000, function () {
   console.log("server started on port 3000");
 });
 
+// CONNECT TO MONGODB DATABASE
 mongoose.connect("mongodb://localhost:27017/gbArchive", {
   useNewUrlParser: true,
 });
 
+// SCHEMA FOR VIDEO ARCHIVE ELEMENTS
 const archiveSchema = new mongoose.Schema({
-  videoId: String,
+  _id: String,
   videoTitle: String,
   channelId: String,
   channelTitle: String,
@@ -50,11 +59,16 @@ const archiveSchema = new mongoose.Schema({
   userRating: Number,
 });
 
+//VIDEO OBJECT MODEL
 const Video = mongoose.model("Video", archiveSchema);
 
-function databaseSubmit(currentId) {
+// FUNCTION CREATES NEW VIDEO ITEM AND SUBMITS TO THE DATABASE
+// ERROR CATCHING IMPLEMENTED TO PREVENT DUPLICATE ENTRIES
+// ERROR MESSAGE IS CURRENTLY NOT BEING DISPLAYED
+async function databaseSubmit(currentId, res) {
+  console.log(currentId);
   const video = new Video({
-    videoId: currentId["id"],
+    _id: currentId["id"],
     videoTitle: currentId["snippet"]["title"],
     channelId: currentId["snippet"]["channelId"],
     channelTitle: currentId["snippet"]["channelTitle"],
@@ -64,7 +78,21 @@ function databaseSubmit(currentId) {
     thumbnailHigh: currentId["snippet"]["thumbnails"]["high"]["url"],
     userRating: 0,
   });
-  video.save();
+
+  try {
+    await video.save();
+  } catch (err) {
+    if (err.name === "MongoServerError" && err.code === 11000) {
+      return res.status(422).json({
+        message: "This video has already been submitted to the Archive",
+      });
+    }
+  }
 }
 
-// exports.databaseSubmit = databaseSubmit;
+async function getDatabaseItems() {
+  const items = await Video.find({});
+  return items;
+}
+
+// function archivePopulate() {}

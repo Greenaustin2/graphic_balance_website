@@ -18,7 +18,9 @@ var watchHistory = [];
 
 //STARUP FUNCTION ON DOM INITIALIZATION
 $(document).ready(() => {
-  startup();
+  if ($("body").data("title") === "index") {
+    startup();
+  }
 });
 
 //NEXT BUTTON

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Archive</title>
+  </head>
+  <body>
+    <h1>HELLO</h1>
+    <% for(var i=0; i < foundItems.length; i++) { %> <% var videoURL =
+    "https://www.youtube.com/embed/" + foundItems[i]["_id"] %> <% var imageURL =
+    foundItems[i]["thumbnailHigh"] %>
+    <p><%= foundItems[i]["videoTitle"] %></p>
+    <img src="<%= imageURL %>" alt="" />
+    <% } %>
+  </body>
+</html>
