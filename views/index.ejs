@@ -6,12 +6,35 @@
     <title>Archive</title>
   </head>
   <body>
-    <h1>HELLO</h1>
+
+    <a href="/index"><button id="home" type="submit">HOME</button></a>
+
     <% for(var i=0; i < foundItems.length; i++) { %> <% var videoURL =
-    "https://www.youtube.com/embed/" + foundItems[i]["_id"] %> <% var imageURL =
-    foundItems[i]["thumbnailHigh"] %>
+    "https://www.youtube.com/embed/" + foundItems[i]['_id'] %> <% var imageURL =
+    foundItems[i]["thumbnailHigh"] %> <% var channelURL =
+    "https://www.youtube.com/channel/" + foundItems[i]["channelId"] %>
+    <hr />
     <p><%= foundItems[i]["videoTitle"] %></p>
-    <img src="<%= imageURL %>" alt="" />
+    <p>
+      Published on: <%= foundItems[i]["publishTime"] %> by
+      <a href="<%= channelURL %>" target="_blank"
+        ><%= foundItems[i]["channelTitle"] %></a
+      >
+      <form action="/delete" method="post">
+        <input type="hidden" value="<%= foundItems[i]['_id'] %>" name="videoId">
+        <input type="submit" value="delete">
+      </form>
+    </p>
+    <iframe
+      width="560"
+      height="315"
+      src="<%=videoURL%>"
+      title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen
+    ></iframe>
+    
     <% } %>
   </body>
 </html>

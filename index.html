@@ -20,8 +20,9 @@
   <body data-title="index">
     <div class="container">
       <div class="header">
-        <h1 id="header">GRAPHIC BALANCE</h1>
-        <a href="/archive">archive</a>
+        <h1 id="header">Graphic Balance</h1>
+        <a href="/archive"><button type="submit">archive collection</button></a>
+        <a href="/"><button type="submit">re-enter api key</button></a>
       </div>
 
       <div class="wrapper">
@@ -31,10 +32,12 @@
         <div class="button-group">
           <button type="button" class="button" id="previous">previous</button>
           <button type="button" class="button" id="refresh">next</button>
-          <button type="button" class="button" id="pause">pause</button>
-          <button type="button" class="button" id="play">play</button>
+          <!-- <button type="button" class="button" id="pause">pause</button>
+          <button type="button" class="button" id="play">play</button> -->
           <form action="/" method="post" id="myForm">
-            <button type="submit" name="archive" id="archive">archive</button>
+            <button type="submit" name="archive" id="archive">
+              archive current video
+            </button>
           </form>
         </div>
         <!-- <button type="button" id="archive">submit to archive</button> -->

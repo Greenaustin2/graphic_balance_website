@@ -4,16 +4,35 @@
     <title></title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta content="X-Content-Type-Options=nosniff" http-equiv="Content-Type" />
+    <base href="./" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
-    <link href="styles.css" rel="stylesheet" />
+    <link href="/public/css/styles.css" rel="stylesheet" />
   </head>
-  <body>
+  <body data-title="splash">
     <div class="container">
+    <div class="form-center">
+        <a href="https://blog.hubspot.com/website/how-to-get-youtube-api-key" target="_blank">INSTRUCTIONS<a/>
+
+        <p>/// submit your api key below ///<p/>
+        <form action="/index" method="POST" id="apiKeyForm">
+          <input
+            type="text"
+            name="apiKey"
+            id="apiKey"
+            value="API KEY"
+          />
+          <input type="submit" name="submit" value="submit" />
+          
+        </form>
+        <a href="/index">ENTER GB</a>
+      </div>
       <div class="center">
         <h1 class="animation">GRAPHIC BALANCE</h1>
       </div>
+      
     </div>
 
-    <script src="textanimation.js"></script>
+    <script src="/public/javascript/app.js"></script>
   </body>
 </html>

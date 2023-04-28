@@ -1,25 +1,60 @@
 // import { databaseSubmit } from ("./server.cjs");
 //API KEY REFERENCE LIST
-const YOUTUBE_API_KEY = [
-  "AIzaSyBesfjYTtAk5vOqCA549-3zr4d4GlCbMvA",
-  "AIzaSyBLwGPRTTLqwPu36ArhTCe9wfaASMaFP7g",
-  "AIzaSyBbjPfpogUhfCptQKixNdKI445O_XFP3hs",
-  "AIzaSyBMOq2KUZg7xFc29bGF9VKQgRHYMEX7tpQ",
-  "AIzaSyBBFpmVkJLy-5iy-4nMGjlzEZWoAfziuuU",
-  "AIzaSyDBxVN6Jb3pYqPfsOM9NdgzItzivNX27QI",
+// const YOUTUBE_API_KEY = [
+//   "AIzaSyBesfjYTtAk5vOqCA549-3zr4d4GlCbMvA",
+//   "AIzaSyBLwGPRTTLqwPu36ArhTCe9wfaASMaFP7g",
+//   "AIzaSyBbjPfpogUhfCptQKixNdKI445O_XFP3hs",
+//   "AIzaSyBMOq2KUZg7xFc29bGF9VKQgRHYMEX7tpQ",
+//   "AIzaSyBBFpmVkJLy-5iy-4nMGjlzEZWoAfziuuU",
+//   "AIzaSyDBxVN6Jb3pYqPfsOM9NdgzItzivNX27QI",
+// ];
+
+const list = [
+  "Helvetica",
+  "Arial",
+  "Verdana",
+  "Tahoma",
+  "Trebuchet",
+  "Impact",
+  "Gill Sans",
+  "Times New Roman",
+  "Georgia",
+  "Palatino",
+  "Baskerville",
+  "Andalé Mono",
+  "Courier",
+  "Lucida",
+  "Monaco",
+  "Bradley",
+  "Brush Script",
+  "Luminari",
+  "Comic Sans",
 ];
 
-const API_INDEX = 4;
+// const API_INDEX = 4;
+var apiKey = sessionStorage.getItem("apiKey");
 
 var currentId;
-export var currentId;
+// export var currentId;
 var nextId;
 var watchHistory = [];
 
-//STARUP FUNCTION ON DOM INITIALIZATION
+// STARUP FUNCTION ON DOM INITIALIZATION
 $(document).ready(() => {
   if ($("body").data("title") === "index") {
     startup();
+  } else if ($("body").data("title") === "splash") {
+    doSomething();
+    $("#apiKeyForm").on("submit", function (e) {
+      e.preventDefault();
+      var apiKeyInput = $("#apiKeyForm :input").val();
+      if (apiKeyInput.length == 39) {
+        sessionStorage.setItem("apiKey", apiKeyInput);
+        alert("api key accepted");
+      } else {
+        alert("invalid api key");
+      }
+    });
   }
 });
 
@@ -65,30 +100,13 @@ $("#archive").on("click", (e) => {
       currentId: currentId,
     },
     success: function (result) {
-      alert("ok");
+      alert(result);
     },
     error: function (result) {
-      alert("error");
+      alert(result);
     },
   });
 });
-
-// $("#archive").on("click", () => {
-//   console.log("archive button clicked");
-
-// });
-
-// KEY CONTROLS FOR PLAYER
-
-// $("#archive").on("click", () => {
-//   writeToArchive(currentId);
-// });
-// ADD VIDEO ID TO ARCHIVE ON BUTTON CLICK
-// $("#archive").on("click", () => {
-//   fs.writefile("./archive.txt", "currentId" + currentId, (err) => {
-//     if (err) throw err;
-//   });
-// });
 
 // GENERATES TEXT FOR SEARCH QUERY
 function query() {
@@ -114,8 +132,8 @@ function query() {
 async function apiRequest(query) {
   console.log("1");
   console.log("ready");
-  console.log(YOUTUBE_API_KEY);
-  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&key=${YOUTUBE_API_KEY[5]}&type=video&videoDuration=short&videoEmbeddable=true&maxResults=100&videoDefinition=high&q=${query}`;
+  // console.log(YOUTUBE_API_KEY);
+  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&key=${apiKey}&type=video&videoDuration=short&videoEmbeddable=true&maxResults=100&videoDefinition=high&q=${query}`;
   const response = await fetch(url);
   console.log("2");
   const data = await response.json();
@@ -135,9 +153,7 @@ async function apiContentDetails(data) {
     }
   }
   console.log(videoIdList);
-  // return videoIdList;
-  // videoContentDetails = [];
-  const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoIdList}&part=contentDetails&key=${YOUTUBE_API_KEY[5]}`;
+  const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoIdList}&part=contentDetails&key=${apiKey}`;
   const response = await fetch(url);
   const contentData = await response.json();
   console.log(contentData);
@@ -145,8 +161,6 @@ async function apiContentDetails(data) {
   for (let i = 0; i < contentData.items.length - 1; i++) {
     contentData.items[i]["snippet"] = data.items[i]["snippet"];
   }
-  // console.log("content data merged" + contentData);
-
   return contentData;
 }
 
@@ -241,3 +255,16 @@ async function refresh() {
   console.log("refresh video cued");
   nextId = await fetchVideoId();
 }
+
+const sleep = (milliseconds) => {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+};
+
+const doSomething = async () => {
+  while (true) {
+    for (let i = 0; i < list.length; i++) {
+      await sleep(100);
+      $(".animation").css("font-family", list[i]);
+    }
+  }
+};

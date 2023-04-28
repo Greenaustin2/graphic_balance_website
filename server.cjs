@@ -17,13 +17,14 @@ app.use(function (req, res, next) {
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(express.static(__dirname));
-app.use(express.static("public"));
-
 //HOME PAGE
 app.get("/", function (req, res) {
-  res.sendFile(__dirname + "/index.html");
+  res.sendFile(__dirname + "/splash.html");
 });
+
+// app.get("/index", function (req, res) {
+//   res.sendFile(__dirname + "/index.html");
+// });
 
 //ARCHIVE DATABASE RETRIEVAL AND EJS REFERENCE
 app.get("/archive", async (req, res) => {
@@ -31,20 +32,40 @@ app.get("/archive", async (req, res) => {
   res.render("index", { foundItems: foundItems });
 });
 
+app.get("/index", function (req, res) {
+  console.log("api key");
+  res.sendFile(__dirname + "/index.html");
+});
 // POST DATA TO DATABASE ON CLICK ARCHIVE BUTTON
 app.post("/", function (req, res) {
   var currentId = req.body.currentId;
   databaseSubmit(currentId, res);
 });
 
+app.post("/delete", function (req, res) {
+  var videoId = req.body.videoId;
+  databaseDelete(videoId);
+  res.redirect(req.get("referer"));
+});
+
+app.post("/index", function (req, res) {
+  res.sendFile(__dirname + "/index.html");
+});
+
 app.listen(process.env.PORT || 3000, function () {
   console.log("server started on port 3000");
 });
 
+app.use(express.static(__dirname));
+app.use(express.static("public"));
+
 // CONNECT TO MONGODB DATABASE
-mongoose.connect("mongodb://localhost:27017/gbArchive", {
-  useNewUrlParser: true,
-});
+mongoose.connect(
+  "mongodb+srv://greenaustin2:Gr33nie1@gbarchive.ctvmr.mongodb.net/gbArchive",
+  {
+    useNewUrlParser: true,
+  }
+);
 
 // SCHEMA FOR VIDEO ARCHIVE ELEMENTS
 const archiveSchema = new mongoose.Schema({
@@ -81,6 +102,7 @@ async function databaseSubmit(currentId, res) {
 
   try {
     await video.save();
+    alert("submission succesful");
   } catch (err) {
     if (err.name === "MongoServerError" && err.code === 11000) {
       return res.status(422).json({
@@ -95,4 +117,8 @@ async function getDatabaseItems() {
   return items;
 }
 
+async function databaseDelete(videoId) {
+  await Video.deleteOne({ _id: videoId });
+  console.log("video deleted");
+}
 // function archivePopulate() {}
