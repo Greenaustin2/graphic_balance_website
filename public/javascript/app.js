@@ -133,7 +133,7 @@ async function apiRequest(query) {
   console.log("1");
   console.log("ready");
   // console.log(YOUTUBE_API_KEY);
-  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&key=${apiKey}&type=video&videoDuration=short&videoEmbeddable=true&maxResults=100&videoDefinition=high&q=${query}`;
+  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&key=${apiKey}&type=video&videoDuration=any&videoEmbeddable=true&maxResults=100&videoDefinition=high&q=${query}`;
   const response = await fetch(url);
   console.log("2");
   const data = await response.json();
@@ -170,7 +170,9 @@ function durationNameFilter(videoContentDetails) {
   var filteredList = {};
   console.log("entered filter function");
   for (let i = 0; i < videoContentDetails.items.length; i++) {
-    if (videoContentDetails.items[i]["contentDetails"]["duration"] < "PT1M0S") {
+    if (
+      videoContentDetails.items[i]["contentDetails"]["duration"] < "PT20M0S"
+    ) {
       filteredList[x] = videoContentDetails.items[i];
       console.log("video is too long");
       x += 1;
