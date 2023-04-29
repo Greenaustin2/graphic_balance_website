@@ -31,6 +31,21 @@ const list = [
   "Comic Sans",
 ];
 
+const languageList = [
+  "bilanc grafik",
+  "grafískt jafnvægi",
+  "equilibrio grafico",
+  "графический баланс",
+  "グラフィックバランス",
+  "grafisk balans",
+  "grafische balans",
+  "גראַפיק וואָג",
+  "გრაფიკული ბალანსი",
+  "graphic na balanse",
+  "grafické vyvážení",
+  "ku ringanisela ka swifaniso",
+];
+
 // const API_INDEX = 4;
 var apiKey = sessionStorage.getItem("apiKey");
 
@@ -38,11 +53,15 @@ var currentId;
 // export var currentId;
 var nextId;
 var watchHistory = [];
+var timeInterval = sessionStorage.getItem("timeInterval");
 
 // STARUP FUNCTION ON DOM INITIALIZATION
 $(document).ready(() => {
   if ($("body").data("title") === "index") {
+    sessionStorage.setItem("timeInterval", "any");
     startup();
+    var header = Math.floor(Math.random() * languageList.length);
+    $("#header").html(languageList[header]);
   } else if ($("body").data("title") === "splash") {
     doSomething();
     $("#apiKeyForm").on("submit", function (e) {
@@ -91,6 +110,26 @@ $("#play").on("click", () => {
   player.playVideo();
 });
 
+// $("#myRange").on("change", () => {
+//   var slider = document.getElementById("myRange");
+//   // var hours = Math.floor(slider.value / 60);
+//   var minutes = slider.value;
+//   timeInterval = minutes;
+//   console.log(minutes);
+//   $("#minutes").text(minutes);
+// });
+
+$("#durationRadio").on("change", () => {
+  console.log("hello");
+  // var radio = document.getElementById("durationRadio");
+  // var hours = Math.floor(slider.value / 60);
+  var duration = $("input[type='radio'][name='videoLength']:checked").val();
+  sessionStorage.setItem("timeInterval", duration);
+  // timeInterval = duration;
+  console.log("duration " + duration);
+  // $("#minutes").text(minutes);
+});
+
 $("#archive").on("click", (e) => {
   e.preventDefault();
   $.ajax({
@@ -133,7 +172,7 @@ async function apiRequest(query) {
   console.log("1");
   console.log("ready");
   // console.log(YOUTUBE_API_KEY);
-  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&key=${apiKey}&type=video&videoDuration=any&videoEmbeddable=true&maxResults=100&videoDefinition=high&q=${query}`;
+  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&key=${apiKey}&type=video&videoDuration=${timeInterval}&videoEmbeddable=true&maxResults=100&videoDefinition=high&q=${query}`;
   const response = await fetch(url);
   console.log("2");
   const data = await response.json();
@@ -161,20 +200,24 @@ async function apiContentDetails(data) {
   for (let i = 0; i < contentData.items.length - 1; i++) {
     contentData.items[i]["snippet"] = data.items[i]["snippet"];
   }
+  console.log(contentData.items[4]["snippet"]);
   return contentData;
 }
 
 // LOOPS THROUGH API RESPONSE AND FILTERS VIDEO ID BY RELEVANT DURATION AND NAME
-function durationNameFilter(videoContentDetails) {
+function durationNameFilter(videoContentDetails, queryValue) {
   var x = 0;
   var filteredList = {};
+  // var ptTimeInterval = "PT" + timeInterval + "M0S";
+  // console.log(timeInterval);
   console.log("entered filter function");
-  for (let i = 0; i < videoContentDetails.items.length; i++) {
-    if (
-      videoContentDetails.items[i]["contentDetails"]["duration"] < "PT20M0S"
-    ) {
+  console.log(
+    "video content details length " + videoContentDetails.items.length
+  );
+  for (let i = 0; i < videoContentDetails.items.length - 1; i++) {
+    if (videoContentDetails.items[i]["snippet"]["title"] === queryValue) {
       filteredList[x] = videoContentDetails.items[i];
-      console.log("video is too long");
+      // console.log("video is too long");
       x += 1;
     }
   }
@@ -227,14 +270,17 @@ async function fetchVideoId() {
     var queryValue = query();
     var videoQueryData = await apiRequest(queryValue);
     var videoContentDetails = await apiContentDetails(videoQueryData);
-    var videoIdListFinal = await durationNameFilter(videoContentDetails);
+    var videoIdListFinal = durationNameFilter(videoContentDetails, queryValue);
+    console.log(
+      "video id list final length " + Object.keys(videoIdListFinal).length
+    );
     if (Object.keys(videoIdListFinal).length > 1) {
       var randNumber = Math.floor(
         Math.random() * Object.keys(videoIdListFinal).length
       );
       watchHistory.push(videoIdListFinal[randNumber]);
-      console.log("watch history item " + watchHistory[0]["id"]);
-      console.log(videoIdListFinal[randNumber]);
+      // console.log("watch history item " + watchHistory[0]["id"]);
+      // console.log(videoIdListFinal[randNumber]);
       return videoIdListFinal[randNumber];
     }
   }

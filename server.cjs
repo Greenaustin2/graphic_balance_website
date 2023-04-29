@@ -4,6 +4,7 @@ const https = require("https");
 const app = express();
 const mongoose = require("mongoose");
 const ejs = require("ejs");
+const date = Date();
 // var currentId = currentId;
 app.set("view engine", "ejs");
 //EXPRESS SERVER INITIALIZATION
@@ -48,6 +49,8 @@ app.post("/delete", function (req, res) {
   res.redirect(req.get("referer"));
 });
 
+// app.upvote("/upvote", function (req, res) {});
+
 app.post("/index", function (req, res) {
   res.sendFile(__dirname + "/index.html");
 });
@@ -75,6 +78,7 @@ const archiveSchema = new mongoose.Schema({
   channelTitle: String,
   description: String,
   publisheTime: String,
+  dateAdded: String,
   duration: String,
   thumbnailHigh: String,
   userRating: Number,
@@ -95,6 +99,7 @@ async function databaseSubmit(currentId, res) {
     channelTitle: currentId["snippet"]["channelTitle"],
     description: currentId["snippet"]["description"],
     publisheTime: currentId["snippet"]["publishedAt"],
+    dateAdded: date,
     duration: currentId["contentDetails"]["duration"],
     thumbnailHigh: currentId["snippet"]["thumbnails"]["high"]["url"],
     userRating: 0,
@@ -121,4 +126,6 @@ async function databaseDelete(videoId) {
   await Video.deleteOne({ _id: videoId });
   console.log("video deleted");
 }
+
+async function upvote(videoId) {}
 // function archivePopulate() {}

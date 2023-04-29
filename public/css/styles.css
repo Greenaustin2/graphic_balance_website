@@ -43,6 +43,7 @@ body {
   /* border: solid purple; */
   padding: 20px 0px 20px 0px;
   text-align: center;
+  display: inline-block;
 }
 
 .button-group {
@@ -81,7 +82,7 @@ a:visited {
 #header {
   font-size: 50px;
   position: relative;
-  font-family: "snell roundhand";
+  font-family: "Arial";
   text-align: center;
 }
 
@@ -142,4 +143,15 @@ input {
 
 .header_buttons {
   margin-bottom: 20px;
+}
+
+.radio-group {
+  /* border: solid yellow; */
+  float: right;
+}
+
+.button-group {
+  display: inline;
+  /* border: solid red; */
+  float: left;
 }
