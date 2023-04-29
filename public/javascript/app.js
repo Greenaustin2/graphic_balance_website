@@ -124,7 +124,7 @@ $("#durationRadio").on("change", () => {
   // var radio = document.getElementById("durationRadio");
   // var hours = Math.floor(slider.value / 60);
   var duration = $("input[type='radio'][name='videoLength']:checked").val();
-  sessionStorage.setItem("timeInterval", duration);
+  sessionStorage.timeInterval = duration;
   // timeInterval = duration;
   console.log("duration " + duration);
   // $("#minutes").text(minutes);
@@ -172,6 +172,7 @@ async function apiRequest(query) {
   console.log("1");
   console.log("ready");
   // console.log(YOUTUBE_API_KEY);
+  console.log("time interval: " + timeInterval);
   const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&key=${apiKey}&type=video&videoDuration=${timeInterval}&videoEmbeddable=true&maxResults=100&videoDefinition=high&q=${query}`;
   const response = await fetch(url);
   console.log("2");
