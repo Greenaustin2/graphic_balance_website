@@ -5,8 +5,9 @@ const app = express();
 const mongoose = require("mongoose");
 const ejs = require("ejs");
 const date = Date();
-// var currentId = currentId;
+
 app.set("view engine", "ejs");
+
 //EXPRESS SERVER INITIALIZATION
 app.use(function (req, res, next) {
   if (req.headers["x-forwarded-proto"] === "https") {
@@ -48,8 +49,6 @@ app.post("/delete", function (req, res) {
   databaseDelete(videoId);
   res.redirect(req.get("referer"));
 });
-
-// app.upvote("/upvote", function (req, res) {});
 
 app.post("/index", function (req, res) {
   res.sendFile(__dirname + "/index.html");
@@ -127,5 +126,5 @@ async function databaseDelete(videoId) {
   console.log("video deleted");
 }
 
-async function upvote(videoId) {}
+// async function upvote(videoId) {}
 // function archivePopulate() {}

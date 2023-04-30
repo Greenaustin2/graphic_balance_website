@@ -52,16 +52,22 @@ var apiKey = sessionStorage.getItem("apiKey");
 var currentId;
 // export var currentId;
 var nextId;
-var watchHistory = [];
+// var watchHistory = [];
+
 var timeInterval = sessionStorage.getItem("timeInterval");
 
 // STARUP FUNCTION ON DOM INITIALIZATION
 $(document).ready(() => {
+  //CODE FOR HOME PAGE INITIALIZATION
   if ($("body").data("title") === "index") {
+    if (!sessionStorage.getItem("watchHistory")) {
+      sessionStorage.setItem("watchHistory", JSON.stringify([]));
+    }
     sessionStorage.setItem("timeInterval", "any");
     startup();
     var header = Math.floor(Math.random() * languageList.length);
     $("#header").html(languageList[header]);
+    //CODE FOR SPLASH PAGE INITIALIZATION
   } else if ($("body").data("title") === "splash") {
     doSomething();
     $("#apiKeyForm").on("submit", function (e) {
@@ -79,9 +85,13 @@ $(document).ready(() => {
 
 //NEXT BUTTON
 $("#refresh").on("click", () => {
+  var watchHistory = JSON.parse(sessionStorage.getItem("watchHistory")) || [];
   var nextIdIndex = watchHistory.findIndex((x) => x.id === currentId["id"]) + 1;
   if (nextIdIndex >= watchHistory.length - 1) {
     refresh();
+    console.log(
+      "time interval from refresh tab: " + sessionStorage.timeInterval
+    );
   } else {
     currentId = watchHistory[nextIdIndex];
     cueVideo(watchHistory[nextIdIndex]["id"]);
@@ -90,6 +100,7 @@ $("#refresh").on("click", () => {
 
 //PREVIOUS BUTTON
 $("#previous").on("click", () => {
+  var watchHistory = JSON.parse(sessionStorage.getItem("watchHistory")) || [];
   var previousIdIndex =
     watchHistory.findIndex((x) => x.id === currentId["id"]) - 1;
   if (previousIdIndex >= 0) {
@@ -110,24 +121,11 @@ $("#play").on("click", () => {
   player.playVideo();
 });
 
-// $("#myRange").on("change", () => {
-//   var slider = document.getElementById("myRange");
-//   // var hours = Math.floor(slider.value / 60);
-//   var minutes = slider.value;
-//   timeInterval = minutes;
-//   console.log(minutes);
-//   $("#minutes").text(minutes);
-// });
-
-$("#durationRadio").on("change", () => {
-  console.log("hello");
-  // var radio = document.getElementById("durationRadio");
-  // var hours = Math.floor(slider.value / 60);
+$("#durationRadio").on("change", async () => {
   var duration = $("input[type='radio'][name='videoLength']:checked").val();
   sessionStorage.timeInterval = duration;
-  // timeInterval = duration;
-  console.log("duration " + duration);
-  // $("#minutes").text(minutes);
+  removeWatchHIstory();
+  nextId = await fetchVideoId();
 });
 
 $("#archive").on("click", (e) => {
@@ -147,6 +145,9 @@ $("#archive").on("click", (e) => {
   });
 });
 
+$(window).bind("beforeunload", function () {
+  removeWatchHIstory();
+});
 // GENERATES TEXT FOR SEARCH QUERY
 function query() {
   // Generates number between 0 and 9999 randomly
@@ -172,8 +173,8 @@ async function apiRequest(query) {
   console.log("1");
   console.log("ready");
   // console.log(YOUTUBE_API_KEY);
-  console.log("time interval: " + timeInterval);
-  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&key=${apiKey}&type=video&videoDuration=${timeInterval}&videoEmbeddable=true&maxResults=100&videoDefinition=high&q=${query}`;
+  console.log("time interval: " + sessionStorage.timeInterval);
+  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&key=${apiKey}&type=video&videoDuration=${sessionStorage.timeInterval}&videoEmbeddable=true&maxResults=100&videoDefinition=high&q=${query}`;
   const response = await fetch(url);
   console.log("2");
   const data = await response.json();
@@ -256,7 +257,18 @@ function onPlayerReady(event) {
 var done = false;
 function onPlayerStateChange(event) {
   if (event.data === 0) {
-    refresh();
+    var watchHistory = JSON.parse(sessionStorage.getItem("watchHistory")) || [];
+    var nextIdIndex =
+      watchHistory.findIndex((x) => x.id === currentId["id"]) + 1;
+    if (nextIdIndex >= watchHistory.length - 1) {
+      refresh();
+      console.log(
+        "time interval from refresh tab: " + sessionStorage.timeInterval
+      );
+    } else {
+      currentId = watchHistory[nextIdIndex];
+      cueVideo(watchHistory[nextIdIndex]["id"]);
+    }
   }
 }
 
@@ -279,7 +291,8 @@ async function fetchVideoId() {
       var randNumber = Math.floor(
         Math.random() * Object.keys(videoIdListFinal).length
       );
-      watchHistory.push(videoIdListFinal[randNumber]);
+      saveWatchHistory(videoIdListFinal[randNumber]);
+      // watchHistory.push(videoIdListFinal[randNumber]);
       // console.log("watch history item " + watchHistory[0]["id"]);
       // console.log(videoIdListFinal[randNumber]);
       return videoIdListFinal[randNumber];
@@ -317,3 +330,17 @@ const doSomething = async () => {
     }
   }
 };
+
+function saveWatchHistory(data) {
+  var watchHistory = [];
+  watchHistory = JSON.parse(sessionStorage.getItem("watchHistory")) || [];
+  watchHistory.push(data);
+  sessionStorage.setItem("watchHistory", JSON.stringify(watchHistory));
+}
+
+function removeWatchHIstory() {
+  var watchHistory = [];
+  watchHistory = JSON.parse(sessionStorage.getItem("watchHistory")) || [];
+  watchHistory.pop();
+  sessionStorage.setItem("watchHistory", JSON.stringify(watchHistory));
+}
